@@ -1,4 +1,4 @@
-import { useEffect, useEffectEvent, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const normalizeResponse = (payload) => {
   if (Array.isArray(payload)) {
@@ -45,7 +45,7 @@ function ResourceView({ title, description, endpoint, columns, renderRow }) {
     meta: null,
   })
 
-  const loadResource = useEffectEvent(async () => {
+  const loadResource = async () => {
     setState((current) => ({ ...current, loading: true, error: '' }))
 
     try {
@@ -74,11 +74,11 @@ function ResourceView({ title, description, endpoint, columns, renderRow }) {
         meta: null,
       })
     }
-  })
+  }
 
   useEffect(() => {
     loadResource()
-  }, [endpoint, loadResource])
+  }, [endpoint])
 
   return (
     <section className="data-panel">
