@@ -1,35 +1,78 @@
+import { Navigate, NavLink, Route, Routes } from 'react-router-dom'
+import Activities from './components/Activities.jsx'
+import Leaderboard from './components/Leaderboard.jsx'
+import Teams from './components/Teams.jsx'
+import Users from './components/Users.jsx'
+import Workouts from './components/Workouts.jsx'
 import './App.css'
 
-const codespaceNameFromHost = window.location.hostname.match(/^(.*)-\d+\.app\.github\.dev$/)?.[1]
-const codespaceName = import.meta.env.VITE_CODESPACE_NAME || codespaceNameFromHost
+const configuredCodespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim() || ''
+const detectedCodespaceName = window.location.hostname.match(/^(.*)-\d+\.app\.github\.dev$/)?.[1] || ''
+const codespaceName = configuredCodespaceName || detectedCodespaceName
 const apiBaseUrl = codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev`
-  : 'http://localhost:8000'
+  ? `https://${codespaceName}-8000.app.github.dev/api`
+  : 'http://localhost:8000/api'
+
+const navItems = [
+  { to: '/users', label: 'Users' },
+  { to: '/activities', label: 'Activities' },
+  { to: '/teams', label: 'Teams' },
+  { to: '/leaderboard', label: 'Leaderboard' },
+  { to: '/workouts', label: 'Workouts' },
+]
 
 function App() {
   return (
-    <main className="container py-5">
-      <div className="row justify-content-center">
-        <div className="col-lg-8">
-          <div className="card shadow-sm border-0">
-            <div className="card-body p-5">
-              <h1 className="display-5 fw-bold">OctoFit Tracker</h1>
-              <p className="lead text-muted">
-                A modern multi-tier fitness experience for logging workouts, building teams, and competing on a leaderboard.
+    <div className="app-shell">
+      <header className="hero-banner">
+        <div className="container py-5">
+          <div className="row align-items-end g-4">
+            <div className="col-lg-8">
+              <p className="eyebrow mb-3">OctoFit Tracker</p>
+              <h1 className="display-4 fw-semibold mb-3">Fitness data across users, teams, workouts, and rankings</h1>
+              <p className="hero-copy mb-0">
+                Browse every API-backed collection from the React 19 presentation tier with one Codespaces-aware base URL.
               </p>
-              <div className="d-flex gap-3 mt-4">
-                <a className="btn btn-primary" href={`${apiBaseUrl}/api/health`}>
-                  Check API
-                </a>
-                <a className="btn btn-outline-secondary" href="https://vite.dev/" target="_blank" rel="noreferrer">
-                  Vite Docs
-                </a>
+            </div>
+            <div className="col-lg-4">
+              <div className="hero-card shadow-sm">
+                <p className="small text-uppercase text-muted mb-2">API base</p>
+                <p className="api-url mb-2">{apiBaseUrl}</p>
+                {!configuredCodespaceName && (
+                  <p className="small text-muted mb-0">
+                    Set <strong>VITE_CODESPACE_NAME</strong> in <strong>.env.local</strong> for an explicit Codespaces API URL.
+                  </p>
+                )}
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </header>
+
+      <main className="container pb-5">
+        <nav className="nav nav-pills flex-wrap gap-2 surface-panel mb-4" aria-label="OctoFit sections">
+          {navItems.map((item) => (
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => `nav-link px-3 py-2 ${isActive ? 'active' : ''}`}
+            >
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <Routes>
+          <Route path="/" element={<Navigate to="/users" replace />} />
+          <Route path="/users" element={<Users apiBaseUrl={apiBaseUrl} />} />
+          <Route path="/activities" element={<Activities apiBaseUrl={apiBaseUrl} />} />
+          <Route path="/teams" element={<Teams apiBaseUrl={apiBaseUrl} />} />
+          <Route path="/leaderboard" element={<Leaderboard apiBaseUrl={apiBaseUrl} />} />
+          <Route path="/workouts" element={<Workouts apiBaseUrl={apiBaseUrl} />} />
+          <Route path="*" element={<Navigate to="/users" replace />} />
+        </Routes>
+      </main>
+    </div>
   )
 }
 
