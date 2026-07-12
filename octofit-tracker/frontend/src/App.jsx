@@ -1,5 +1,11 @@
 import './App.css'
 
+const codespaceNameFromHost = window.location.hostname.match(/^(.*)-\d+\.app\.github\.dev$/)?.[1]
+const codespaceName = import.meta.env.VITE_CODESPACE_NAME || codespaceNameFromHost
+const apiBaseUrl = codespaceName
+  ? `https://${codespaceName}-8000.app.github.dev`
+  : 'http://localhost:8000'
+
 function App() {
   return (
     <main className="container py-5">
@@ -12,7 +18,7 @@ function App() {
                 A modern multi-tier fitness experience for logging workouts, building teams, and competing on a leaderboard.
               </p>
               <div className="d-flex gap-3 mt-4">
-                <a className="btn btn-primary" href="http://localhost:8000/api/health">
+                <a className="btn btn-primary" href={`${apiBaseUrl}/api/health`}>
                   Check API
                 </a>
                 <a className="btn btn-outline-secondary" href="https://vite.dev/" target="_blank" rel="noreferrer">

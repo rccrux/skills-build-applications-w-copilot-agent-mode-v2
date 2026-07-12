@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 exports.startServer = startServer;
 const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const user_1 = __importDefault(require("./models/user"));
 const team_1 = __importDefault(require("./models/team"));
@@ -20,6 +21,22 @@ const codespaceName = process.env.CODESPACE_NAME;
 const baseUrl = codespaceName
     ? `https://${codespaceName}-8000.app.github.dev`
     : `http://localhost:${port}`;
+const allowedOrigins = [
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+];
+if (codespaceName) {
+    allowedOrigins.push(`https://${codespaceName}-5173.app.github.dev`);
+}
+app.use((0, cors_1.default)({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+            return;
+        }
+        callback(new Error('Origin not allowed by CORS'));
+    },
+}));
 app.use(express_1.default.json());
 const ensureDatabaseConnection = async () => {
     if (mongoose_1.default.connection.readyState !== 1) {
