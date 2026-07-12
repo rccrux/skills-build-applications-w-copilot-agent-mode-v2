@@ -1,11 +1,13 @@
 import ResourceView from './ResourceView.jsx'
 
 function Users({ apiBaseUrl }) {
+  const endpoint = `${apiBaseUrl}/users/`
+
   return (
     <ResourceView
       title="Users"
       description="Profile records with fitness level, age, and home city."
-      endpoint={`${apiBaseUrl}/users/`}
+      endpoint={endpoint}
       columns={[
         { key: 'name', label: 'Name' },
         { key: 'email', label: 'Email' },

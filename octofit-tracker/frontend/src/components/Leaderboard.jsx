@@ -1,11 +1,13 @@
 import ResourceView from './ResourceView.jsx'
 
 function Leaderboard({ apiBaseUrl }) {
+  const endpoint = `${apiBaseUrl}/leaderboard/`
+
   return (
     <ResourceView
       title="Leaderboard"
       description="Competitive standings with scores, streaks, and rank placement."
-      endpoint={`${apiBaseUrl}/leaderboard/`}
+      endpoint={endpoint}
       columns={[
         { key: 'rank', label: 'Rank' },
         { key: 'score', label: 'Score' },

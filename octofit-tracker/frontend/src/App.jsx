@@ -7,11 +7,20 @@ import Workouts from './components/Workouts.jsx'
 import './App.css'
 
 const configuredCodespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim() || ''
-const detectedCodespaceName = window.location.hostname.match(/^(.*)-\d+\.app\.github\.dev$/)?.[1] || ''
-const codespaceName = configuredCodespaceName || detectedCodespaceName
-const apiBaseUrl = codespaceName
-  ? `https://${codespaceName}-8000.app.github.dev/api`
-  : 'http://localhost:8000/api'
+
+const resolveApiBaseUrl = () => {
+  const detectedCodespaceName = window.location.hostname.match(/^(.*)-\d+\.app\.github\.dev$/)?.[1] || ''
+  const codespaceName = configuredCodespaceName || detectedCodespaceName
+
+  return {
+    apiBaseUrl: codespaceName
+      ? `https://${codespaceName}-8000.app.github.dev/api`
+      : 'http://localhost:8000/api',
+    detectedCodespaceName,
+  }
+}
+
+const { apiBaseUrl, detectedCodespaceName } = resolveApiBaseUrl()
 
 const navItems = [
   { to: '/users', label: 'Users' },
@@ -40,7 +49,14 @@ function App() {
                 <p className="api-url mb-2">{apiBaseUrl}</p>
                 {!configuredCodespaceName && (
                   <p className="small text-muted mb-0">
-                    Set <strong>VITE_CODESPACE_NAME</strong> in <strong>.env.local</strong> for an explicit Codespaces API URL.
+                    Set <strong>VITE_CODESPACE_NAME</strong> in <strong>.env.local</strong> for the expected
+                    {' '}<code>https://&lt;codespace&gt;-8000.app.github.dev/api</code> endpoint pattern.
+                  </p>
+                )}
+                {!configuredCodespaceName && !detectedCodespaceName && (
+                  <p className="small text-muted mt-2 mb-0">
+                    Fallback stays on <strong>http://localhost:8000/api</strong> so the app never generates an invalid
+                    {' '}<code>https://undefined-8000...</code> URL.
                   </p>
                 )}
               </div>

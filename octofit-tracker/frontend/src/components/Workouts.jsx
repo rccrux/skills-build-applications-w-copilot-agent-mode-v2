@@ -1,11 +1,13 @@
 import ResourceView from './ResourceView.jsx'
 
 function Workouts({ apiBaseUrl }) {
+  const endpoint = `${apiBaseUrl}/workouts/`
+
   return (
     <ResourceView
       title="Workouts"
       description="Suggested routines with duration, difficulty, and training focus."
-      endpoint={`${apiBaseUrl}/workouts/`}
+      endpoint={endpoint}
       columns={[
         { key: 'title', label: 'Workout' },
         { key: 'difficulty', label: 'Difficulty' },
